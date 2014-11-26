@@ -9,7 +9,7 @@ headers_more_nginx_module_url=https://github.com/agentzh/headers-more-nginx-modu
 echo "Start script"
 cur_dir=`pwd`
 prefix="/usr/local"
-if ( $1 == 'heroku'); then
+if [ "$1" == "heroku" ]; then
 	( cd /tmp ; python -m SimpleHTTPServer $PORT & )
 	prefix="/tmp/nginx"
 fi
@@ -41,9 +41,15 @@ echo "Compile nginx with http_libvlc module"
 	sudo make install
 )
 
-if ( $1 != 'heroku'); then
+if [ "$1" != "heroku" ];  then
 	sudo apt-get -y install ruby
-	erb $cur_dir/config/nginx.conf.erb > /usr/local/conf/nginx.conf
+	erb $cur_dir/config/nginx.conf.erb > nginx.conf
+	sudo cp nginx.conf /usr/local/conf/nginx.conf
+	sudo mkdir -p /usr/local/logs/nginx/
+	sudo mkdir -p /app/logs/libvlc
+	sudo mkdir -p ${PREFIX_LOCATION}
+	sudo chmod -R 777 ${PREFIX_LOCATION}
+    sudo chmod -R 777 /app/logs/libvlc
 fi
 
 while true
