@@ -38,19 +38,22 @@ echo "Compile nginx with http_libvlc module"
 		--prefix=$prefix \
 		--add-module=/${temp_dir}/nginx-${NGINX_VERSION}/headers-more-nginx-module-${HEADERS_MORE_VERSION} \
 		--add-module=/${temp_dir}/ngx_http_libvlc_module 
-	sudo make install
+	if [ "$1" != "heroku" ];  then
+		sudo make install
+		sudo apt-get -y install ruby
+		erb $cur_dir/config/nginx.conf.erb > nginx.conf
+		sudo cp nginx.conf /usr/local/conf/nginx.conf
+		sudo mkdir -p /usr/local/logs/nginx/
+		sudo mkdir -p /app/logs/libvlc
+		sudo mkdir -p ${PREFIX_LOCATION}
+		sudo chmod -R 777 ${PREFIX_LOCATION}
+	    sudo chmod -R 777 /app/logs/libvlc
+	else
+		make install
+	fi	
 )
 
-if [ "$1" != "heroku" ];  then
-	sudo apt-get -y install ruby
-	erb $cur_dir/config/nginx.conf.erb > nginx.conf
-	sudo cp nginx.conf /usr/local/conf/nginx.conf
-	sudo mkdir -p /usr/local/logs/nginx/
-	sudo mkdir -p /app/logs/libvlc
-	sudo mkdir -p ${PREFIX_LOCATION}
-	sudo chmod -R 777 ${PREFIX_LOCATION}
-    sudo chmod -R 777 /app/logs/libvlc
-fi
+
 
 while true
 do
