@@ -81,13 +81,13 @@ int ngx_libvlc_hls_convert(char* uri, hls_transcode_option* option, ngx_str_t re
 	struct stat st;
 	sprintf(store_folder, "%s/%s",option->prefix_location,option->request_id);
 	if (stat(store_folder, &st) == -1) {
-		    mkdir(store_folder, 775);
+		    mkdir(store_folder, 0777);
 	}
   //check if log folder is created
   memset(store_folder, '\0',100);
   sprintf(store_folder, "/app/logs/libvlc");
   if (stat(store_folder, &st) == -1) {
-        mkdir(store_folder, 775);
+        mkdir(store_folder, 0777);
   }
 
   //construction parameter    
