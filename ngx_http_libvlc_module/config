@@ -1,0 +1,7 @@
+CORE_LIBS="$CORE_LIBS -lvlc"
+
+ngx_addon_name=ngx_http_libvlc_module
+
+HTTP_MODULES="$HTTP_MODULES ngx_http_libvlc_module"
+
+NGX_ADDON_SRCS="$NGX_ADDON_SRCS $ngx_addon_dir/ngx_http_libvlc_module.c $ngx_addon_dir/ngx_libvlc_call.c $ngx_addon_dir/ngx_libvlc_utils.c"

@@ -1,0 +1,17 @@
+libasound2-dev 
+build-essential 
+libtool 
+libavcodec-dev 
+libavformat-dev 
+zlib1g-dev 
+curl 
+libdvbpsi-dev 
+liblua5.2-dev 
+lua5.2
+libmpeg2-4-dev  
+x264 
+libx264-dev
+libxcb-composite0-dev
+libxcb-xv0-dev 
+libmpeg2-4-dev
+
