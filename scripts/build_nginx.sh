@@ -7,7 +7,7 @@ pcre_tarball_url=http://garr.dl.sourceforge.net/project/pcre/pcre/${PCRE_VERSION
 headers_more_nginx_module_url=https://github.com/agentzh/headers-more-nginx-module/archive/v${HEADERS_MORE_VERSION}.tar.gz
 
 echo "Start script"
-
+cur_dir=`pwd`
 prefix="/usr/local"
 if ( $1 == 'heroku'); then
 	( cd /tmp ; python -m SimpleHTTPServer $PORT & )
@@ -40,6 +40,11 @@ echo "Compile nginx with http_libvlc module"
 		--add-module=/${temp_dir}/ngx_http_libvlc_module 
 	sudo make install
 )
+
+if ( $1 != 'heroku'); then
+	sudo apt-get -y install ruby
+	erb $cur_dir/config/nginx.conf.erb > /usr/local/conf/nginx.conf
+fi
 
 while true
 do
