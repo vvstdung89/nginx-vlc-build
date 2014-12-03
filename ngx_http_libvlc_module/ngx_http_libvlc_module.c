@@ -98,8 +98,6 @@ ngx_http_libvlc_handler(ngx_http_request_t *r)
 {
     printf("Enter libvlc handler ...\n");
     ngx_int_t    rc;
-    ngx_buf_t   *b;
-    ngx_chain_t  out;
  	
  	
 
@@ -115,25 +113,8 @@ ngx_http_libvlc_handler(ngx_http_request_t *r)
         return rc;
     }
  
-    /* set the 'Content-type' header */
-    r->headers_out.content_type_len = sizeof("text/html") - 1;
-    r->headers_out.content_type.len = sizeof("text/html") - 1;
-    r->headers_out.content_type.data = (u_char *) "text/html";
-
-    /* send the header only, if the request type is http 'HEAD' */
-    // if (r->method == NGX_HTTP_HEAD) {
-    //     r->headers_out.status = NGX_HTTP_OK;
-    //     r->headers_out.content_length_n = hello_string.len;
- 
-    //     return ngx_http_send_header(r);
-    // }
- 
-    /* allocate a buffer for your response body */
-    b = ngx_pcalloc(r->pool, sizeof(ngx_buf_t));
-    if (b == NULL) {
-        return NGX_HTTP_INTERNAL_SERVER_ERROR;
-    }
-    
+   
+       
     //the buffer to store request url (input video)
     char *uri = malloc(500*sizeof(char*));
     
@@ -184,28 +165,17 @@ ngx_http_libvlc_handler(ngx_http_request_t *r)
     }
 
     trancode_link_respond.len = ngx_strlen(trancode_link_respond.data);
-    /* attach this buffer to the buffer chain */
-    out.buf = b;
-    out.next = NULL;
- 
-    /* adjust the pointers of the buffer */
-    //r->headers_in
-    b->pos = trancode_link_respond.data;
-    b->last = trancode_link_respond.data + trancode_link_respond.len;
-    b->memory = 1;    /* this buffer is in memory */
-    b->last_buf = 1;  /* this is the last buffer in the buffer chain */
- 
-    /* set the status line */
-    r->headers_out.status = NGX_HTTP_OK;
-    r->headers_out.content_length_n = trancode_link_respond.len;
- 
-    /* send the headers of your response */
-    rc = ngx_http_send_header(r);
- 
-    if (rc == NGX_ERROR || rc > NGX_OK || r->header_only) {
-        return rc;
+        
+    r->headers_out.status = NGX_HTTP_MOVED_PERMANENTLY; 
+
+    r->headers_out.location = ngx_list_push(&r->headers_out.headers);
+    if (r->headers_out.location == NULL) {
+        ngx_http_finalize_request(r, NGX_HTTP_INTERNAL_SERVER_ERROR);
     }
-    
+    r->headers_out.location->hash = 1;
+    ngx_str_set(&r->headers_out.location->key, "Location");
+    r->headers_out.location->value.len = trancode_link_respond.len; 
+    r->headers_out.location->value.data = (u_char *) trancode_link_respond.data;
 
     free(uri);
     free(transcode_option->request_id);
@@ -213,8 +183,8 @@ ngx_http_libvlc_handler(ngx_http_request_t *r)
     free(transcode_option->prefix_url);
     free(transcode_option);
 
-    /* send the buffer chain of your response */
-    return ngx_http_output_filter(r, &out);
+    /* send the headers of your response */
+    return NGX_HTTP_MOVED_PERMANENTLY;
 }
  
 /*
