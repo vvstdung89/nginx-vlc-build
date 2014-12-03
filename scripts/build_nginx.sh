@@ -45,6 +45,8 @@ echo "Compile nginx with http_libvlc module"
 		sudo cp nginx.conf /usr/local/conf/nginx.conf
 		sudo mkdir -p /usr/local/logs/nginx/
 		sudo mkdir -p /app/logs/libvlc
+		sudo mkdir -p ${PREFIX_LOCATION}
+		sudo chmod -R 777 ${PREFIX_LOCATION}
 	    sudo chmod -R 777 /app/logs/libvlc
 	else
 		make install
