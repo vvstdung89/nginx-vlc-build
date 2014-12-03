@@ -170,7 +170,7 @@ int ngx_libvlc_hls_convert(char* uri, hls_transcode_option* option, ngx_str_t re
     libvlc_release(inst);
 
     //return time out string
-    sprintf((char*)res.data,"Request time out");
+    sprintf((char*)res.data," ");
 
     //free up memory
     free(smem_options);

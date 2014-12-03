@@ -161,8 +161,19 @@ ngx_http_libvlc_handler(ngx_http_request_t *r)
     	ngx_libvlc_hls_convert(uri, transcode_option, trancode_link_respond) ;
 
     } else { //the request is not in correct format
-    	sprintf((char *)trancode_link_respond.data,"The request is not valid. Please use format http://path/video.file");
+    	trancode_link_respond.data=(u_char*) " ";
     }
+
+    if (strncmp((char* )trancode_link_respond.data, " ", 1) == 0){
+        printf("error \n");
+        free(uri);
+        free(transcode_option->request_id);
+        free(transcode_option->prefix_location);
+        free(transcode_option->prefix_url);
+        free(transcode_option);
+        return NGX_HTTP_OK;
+    }
+
 
     trancode_link_respond.len = ngx_strlen(trancode_link_respond.data);
         
@@ -176,7 +187,7 @@ ngx_http_libvlc_handler(ngx_http_request_t *r)
     ngx_str_set(&r->headers_out.location->key, "Location");
     r->headers_out.location->value.len = trancode_link_respond.len; 
     r->headers_out.location->value.data = (u_char *) trancode_link_respond.data;
-
+    printf("send %s\n",trancode_link_respond.data);
     free(uri);
     free(transcode_option->request_id);
     free(transcode_option->prefix_location);
